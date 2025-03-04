@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/gofiber/fiber/v2"
+
 	"ecommerce-project/config"
 	db "ecommerce-project/databases"
 )
@@ -24,5 +26,12 @@ func main() {
 	)
 	db.Init(connectionUri)
 
-	return
+	// Listening client
+	app := fiber.New()
+
+	app.Get("/", func(c *fiber.Ctx) error  {
+		return c.SendString("Hello, World!")
+	})
+
+	app.Listen(":8080")
 }

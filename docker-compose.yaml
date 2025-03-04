@@ -11,6 +11,8 @@ services:
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
+    ports:
+      - 8080:8080
     restart: always
   mongodb:
     container_name: mongodb
