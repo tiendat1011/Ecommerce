@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+    restart: always
   mongodb:
     container_name: mongodb
     image: mongo
