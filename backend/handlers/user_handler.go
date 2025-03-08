@@ -4,21 +4,19 @@ import (
 	"ecommerce-project/models"
 	"ecommerce-project/services"
 	"ecommerce-project/utils"
-	"fmt"
-	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler struct {
 	userService *services.UserService
-	validator *utils.Validator
+	validator   *utils.Validator
 }
 
 func NewUserHandler(userService *services.UserService, validator *utils.Validator) *UserHandler {
 	return &UserHandler{
 		userService: userService,
-		validator: validator,
+		validator:   validator,
 	}
 }
 
@@ -31,27 +29,15 @@ func (h *UserHandler) CreateUser(ctx *fiber.Ctx) error {
 
 	// Validation
 	if errs := h.validator.Validate(u); len(errs) > 0 && errs[0].Error {
-		errMsgs := make([]string, 0)
-
-		for _, err := range errs {
-			errMsgs = append(errMsgs, fmt.Sprintf(
-				"[%s]: '%v' | Needs to implement '%s'",
-				err.FailedField,
-				err.Value,
-				err.Tag,
-			))
-		}
-
-		return fiber.NewError(
-			fiber.StatusBadRequest,
-			strings.Join(errMsgs, " and "),
-		)
+		return h.validator.DefaultMessage(errs)
 	}
 
 	createdUser, err := h.userService.CreateUser(u)
 	if err != nil {
 		return err
 	}
+
+	// Generate token and set cookie
 	if err := utils.GenerateToken(createdUser.ID.String(), ctx); err != nil {
 		return err
 	}

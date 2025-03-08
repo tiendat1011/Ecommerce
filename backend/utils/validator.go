@@ -1,7 +1,11 @@
 package utils
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
 )
 
 type (
@@ -36,4 +40,22 @@ func (v *Validator) Validate(data interface{}) []ErrorResponse {
 		}
 	}
 	return validationErrors
+}
+
+func (v *Validator) DefaultMessage(errs []ErrorResponse) error {
+	errMsgs := make([]string, 0)
+
+	for _, err := range errs {
+		errMsgs = append(errMsgs, fmt.Sprintf(
+			"[%s]: '%v' | Needs to implement '%s'",
+			err.FailedField,
+			err.Value,
+			err.Tag,
+		))
+	}
+
+	return fiber.NewError(
+		fiber.StatusBadRequest,
+		strings.Join(errMsgs, " and "),
+	)
 }

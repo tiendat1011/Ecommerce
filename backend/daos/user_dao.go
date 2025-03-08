@@ -16,7 +16,7 @@ type UserDAO struct {
 }
 
 const (
-	COLLECTION = "users"
+	USER_COLLECTION = "users"
 )
 
 func NewUserDAO() *UserDAO {
@@ -24,7 +24,7 @@ func NewUserDAO() *UserDAO {
 		panic("Not connect db yet")
 	}
 	return &UserDAO{
-		collection: databases.DB.Collection(COLLECTION),
+		collection: databases.DB.Collection(USER_COLLECTION),
 	}
 }
 
