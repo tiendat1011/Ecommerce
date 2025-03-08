@@ -28,9 +28,15 @@ func (s *AuthService) Login(lr *models.LoginRequest, ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Password is invalid")
 	}
 
-	if err := utils.GenerateToken(existingUser.ID.String(), ctx); err != nil {
+	if err := utils.GenerateToken(existingUser.ID.String(), existingUser.Email, ctx); err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
+
+	return nil
+}
+
+func (s *AuthService) Logout(ctx *fiber.Ctx) error {
+	ctx.ClearCookie("token")
 
 	return nil
 }

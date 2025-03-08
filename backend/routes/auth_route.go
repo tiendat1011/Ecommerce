@@ -19,4 +19,5 @@ func AuthRoute(app fiber.Router) {
 
 	authGroup := app.Group("/auth")
 	authGroup.Post("/", authHandler.Login)
+	authGroup.Post("/logout", authHandler.Logout)
 }

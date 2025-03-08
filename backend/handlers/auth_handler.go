@@ -36,5 +36,15 @@ func (h *AuthHandler) Login(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.Status(fiber.StatusOK).SendString("Login success")
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Login success",
+	})
+}
+
+func (h *AuthHandler) Logout(ctx *fiber.Ctx) error {
+	h.authService.Logout(ctx)
+
+	return ctx.Status(fiber.StatusNoContent).JSON(fiber.Map{
+		"message": "Logout success",
+	})
 }
