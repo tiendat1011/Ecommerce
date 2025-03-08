@@ -16,7 +16,7 @@ type UserDAO struct {
 }
 
 const (
-	COLLECTION = "user"
+	COLLECTION = "users"
 )
 
 func NewUserDAO() *UserDAO {

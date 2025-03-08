@@ -12,7 +12,7 @@ import (
 
 var DB *mongo.Database
 
-func Init(uri string, cfg *config.Config) {
+func Init(uri string) {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
 
@@ -26,7 +26,7 @@ func Init(uri string, cfg *config.Config) {
 		panic(err)
 	}
 
-	DB = client.Database(cfg.DbName)
+	DB = client.Database(config.Cfg.DbName)
 	fmt.Println("Connected to MongoDB")
 
 }

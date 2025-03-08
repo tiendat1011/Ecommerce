@@ -11,13 +11,16 @@ type Config struct {
 	DbPass string `env:"DB_PASS" envDefault:"password"`
 	DbName string `env:"DB_NAME" envDefault:"ecommerce"`
 	ServerPort string `env:"SERVER_PORT" envDefault:"8080"`
+	JwtSecret string `env:"JWT_SECRET" envDefault:"iluvgolang"`
 }
 
-func Load() (*Config, error) {
-	cfg := Config{}
-	if err := env.Parse(&cfg); err != nil {
-		return &cfg, err
+var Cfg *Config
+
+func Load() error {
+	Cfg = &Config{}
+	if err := env.Parse(Cfg); err != nil {
+		return err
 	}
 
-	return &cfg, nil
+	return nil
 }

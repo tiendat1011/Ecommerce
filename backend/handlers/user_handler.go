@@ -52,6 +52,10 @@ func (h *UserHandler) CreateUser(ctx *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	if err := utils.GenerateToken(createdUser.ID.String(), ctx); err != nil {
+		return err
+	}
+
 	return ctx.Status(fiber.StatusCreated).JSON(createdUser)
 }
 

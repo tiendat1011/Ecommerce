@@ -14,19 +14,19 @@ import (
 
 func main() {
 	// Init app
-	cfg, err := config.Load()
+	err := config.Load()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Connection string mongodb
 	connectionUri := fmt.Sprintf("mongodb://%s:%s@%s:%s",
-		cfg.DbUser,
-		cfg.DbPass,
-		cfg.DbHost,
-		cfg.DbPort,
+		config.Cfg.DbUser,
+		config.Cfg.DbPass,
+		config.Cfg.DbHost,
+		config.Cfg.DbPort,
 	)
-	databases.Init(connectionUri, cfg)
+	databases.Init(connectionUri)
 	app := fiber.New()
 
 	// Middleware
@@ -37,8 +37,8 @@ func main() {
 	routes.UserRoutes(api)
 
 	// Start server
-	serverAddr := fmt.Sprintf("%s:%s", "", cfg.ServerPort)
+	serverAddr := fmt.Sprintf("%s:%s", "", config.Cfg.ServerPort)
 	log.Printf(serverAddr)
-	log.Printf("Server running on port %s", cfg.ServerPort)
+	log.Printf("Server running on port %s", config.Cfg.ServerPort)
 	log.Fatal(app.Listen(serverAddr))
 }
