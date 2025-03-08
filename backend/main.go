@@ -7,11 +7,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"ecommerce-project/config"
-	db "ecommerce-project/databases"
+	"ecommerce-project/databases"
+	"ecommerce-project/routes"
 )
 
 func main() {
-	// Loading environment from .env
+	// Init app
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatal(err)
@@ -24,14 +25,18 @@ func main() {
 		cfg.DbHost,
 		cfg.DbPort,
 	)
-	db.Init(connectionUri)
-
-	// Listening client
+	databases.Init(connectionUri, cfg)
 	app := fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error  {
-		return c.SendString("Hello, World!")
-	})
+	// Middleware
 
-	app.Listen(":8080")
+	// Init Route
+	api := app.Group("/api/v1")
+	routes.UserRoutes(api)
+
+	// Start server
+	serverAddr := fmt.Sprintf("%s:%s", "", cfg.ServerPort)
+	log.Printf(serverAddr)
+	log.Printf("Server running on port %s", cfg.ServerPort)
+	log.Fatal(app.Listen(serverAddr))
 }

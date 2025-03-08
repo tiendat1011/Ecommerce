@@ -9,13 +9,15 @@ type Config struct {
 	DbPort string `env:"DB_PORT" envDefault:"27017"`
 	DbUser string `env:"DB_USER" envDefault:"admin"`
 	DbPass string `env:"DB_PASS" envDefault:"password"`
+	DbName string `env:"DB_NAME" envDefault:"ecommerce"`
+	ServerPort string `env:"SERVER_PORT" envDefault:"8080"`
 }
 
-func Load() (Config, error) {
+func Load() (*Config, error) {
 	cfg := Config{}
 	if err := env.Parse(&cfg); err != nil {
-		return cfg, err
+		return &cfg, err
 	}
 
-	return cfg, nil
+	return &cfg, nil
 }
