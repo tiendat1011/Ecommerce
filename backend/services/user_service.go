@@ -3,7 +3,7 @@ package services
 import (
 	"ecommerce-project/daos"
 	"ecommerce-project/models"
-	"fmt"
+	"ecommerce-project/utils"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -23,12 +23,16 @@ func (s *UserService) CreateUser(user *models.User) (*models.User, error) {
 		return nil, fiber.NewError(fiber.StatusConflict, "User already exists")
 	}
 
-	fmt.Println(user)
+	hashedPassword, err := utils.HashPassword(user.Username)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+	user.Password = hashedPassword
 
 	createdUser, err := s.userDAO.CreateUser(user)
 	if err != nil {
 		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
-	
+
 	return createdUser, nil
 }
