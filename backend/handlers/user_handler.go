@@ -64,3 +64,16 @@ func (h *UserHandler) GetUserProfile(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(user)
 }
+
+func (h *UserHandler) UpdateUserProfile(ctx *fiber.Ctx) error {
+	ur := &models.UpdateRequest{}
+	if err := ctx.BodyParser(ur); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+
+	if err := h.userService.UpdateUserProfile(ur, ctx); err != nil {
+		return err
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON("Updated successfully")
+}

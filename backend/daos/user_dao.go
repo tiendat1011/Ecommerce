@@ -4,9 +4,11 @@ import (
 	"context"
 	"ecommerce-project/databases"
 	"ecommerce-project/models"
+	"ecommerce-project/utils"
 	"errors"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -82,4 +84,37 @@ func (d *UserDAO) GetAllUsers() ([]*models.User, error) {
 	}
 
 	return users, nil
+}
+
+func (d *UserDAO) UpdateUser(ur *models.UpdateRequest, id string) (error) {
+	update := bson.M{}
+
+	if ur.Username != "" {
+		update["username"] = ur.Username
+	}
+	if ur.Email != "" {
+		update["email"] = ur.Email
+	}
+	if ur.Password != "" {
+		update["password"], _ = utils.HashPassword(ur.Password) // Hash password
+	}
+
+	if len(update) == 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "No fields to update")
+	}
+
+	updated := bson.M{"$set": update}
+
+	objID, err := primitive.ObjectIDFromHex(id)
+
+	result, err := d.collection.UpdateOne(context.TODO(), bson.M{"_id": objID}, updated)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to update user")
+	}
+
+	if result.MatchedCount == 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "Something went when saving")
+	}
+
+	return nil
 }

@@ -21,5 +21,6 @@ func UserRoutes(app fiber.Router) {
 	userGroup := app.Group("/users")
 	userGroup.Post("/", userHandler.CreateUser)
 	userGroup.Get("/", middlewares.AuthMiddleware, userHandler.GetAllUsers)
-	userGroup.Get("/profile",middlewares.AuthMiddleware, userHandler.GetUserProfile)
+	userGroup.Get("/profile", middlewares.AuthMiddleware, userHandler.GetUserProfile)
+	userGroup.Put("/profile", middlewares.AuthMiddleware, userHandler.UpdateUserProfile)
 }

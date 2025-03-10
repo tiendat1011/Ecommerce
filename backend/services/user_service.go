@@ -54,3 +54,16 @@ func (s *UserService) GetUserProfile(ctx *fiber.Ctx) (*models.User, error) {
 
 	return user, nil
 }
+
+func (s *UserService) UpdateUserProfile(ur *models.UpdateRequest, ctx *fiber.Ctx) error {
+	userClaims, err := utils.GetCurrentUser(ctx)
+	if err != nil {
+		return fiber.NewError(fiber.StatusUnauthorized, err.Error())
+	}
+
+	if err := s.userDAO.UpdateUser(ur, userClaims.UserID); err != nil {
+		return err
+	}
+
+	return nil
+}
