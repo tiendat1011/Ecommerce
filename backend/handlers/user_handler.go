@@ -38,13 +38,29 @@ func (h *UserHandler) CreateUser(ctx *fiber.Ctx) error {
 	}
 
 	// Generate token and set cookie
-	if err := utils.GenerateToken(createdUser.ID.String(), createdUser.Email, ctx); err != nil {
+	if err := utils.GenerateToken(createdUser.ID.Hex(), createdUser.Email, ctx); err != nil {
 		return err
 	}
 
 	return ctx.Status(fiber.StatusCreated).JSON(createdUser)
 }
 
-func (h *UserHandler) GetUser(ctx *fiber.Ctx) error {
-	return ctx.Status(fiber.StatusOK).SendString("Hello World")
+func (h *UserHandler) GetAllUsers(ctx *fiber.Ctx) error {
+	users, err := h.userService.GetAllUsers()
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(users)
+}
+
+func (h *UserHandler) GetUserProfile(ctx *fiber.Ctx) error {
+	user, err := h.userService.GetUserProfile(ctx)
+	if err != nil {
+		return err
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(user)
 }

@@ -3,6 +3,7 @@ package routes
 import (
 	"ecommerce-project/daos"
 	"ecommerce-project/handlers"
+	"ecommerce-project/middlewares"
 	"ecommerce-project/services"
 	"ecommerce-project/utils"
 
@@ -19,5 +20,6 @@ func UserRoutes(app fiber.Router) {
 
 	userGroup := app.Group("/users")
 	userGroup.Post("/", userHandler.CreateUser)
-	userGroup.Get("/", userHandler.GetUser)
+	userGroup.Get("/", middlewares.AuthMiddleware, userHandler.GetAllUsers)
+	userGroup.Get("/profile",middlewares.AuthMiddleware, userHandler.GetUserProfile)
 }

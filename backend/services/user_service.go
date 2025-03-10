@@ -36,3 +36,21 @@ func (s *UserService) CreateUser(user *models.User) (*models.User, error) {
 
 	return createdUser, nil
 }
+
+func (s *UserService) GetAllUsers() ([]*models.User, error) {
+	return s.userDAO.GetAllUsers()
+}
+
+func (s *UserService) GetUserProfile(ctx *fiber.Ctx) (*models.User, error) {
+	userClaims, err := utils.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusUnauthorized, err.Error())
+	}
+
+	user, err := s.userDAO.GetUserById(userClaims.UserID)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusNotFound, err.Error())
+	}
+
+	return user, nil
+}

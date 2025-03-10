@@ -71,3 +71,12 @@ func VerifyToken(tokenStr string) (*Claims, error) {
 
 	return claims, nil
 }
+
+func GetCurrentUser(ctx *fiber.Ctx) (*Claims, error) {
+	user, ok := ctx.Locals("user").(*Claims)
+	if !ok {
+		return nil, errors.New("User not found in context")
+	}
+
+	return user, nil
+}

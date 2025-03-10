@@ -16,6 +16,7 @@ services:
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     restart: always
+    
   mongodb:
     container_name: mongodb
     image: mongo
