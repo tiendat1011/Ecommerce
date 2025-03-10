@@ -26,3 +26,16 @@ func AuthMiddleware(ctx *fiber.Ctx) error {
 
 	return ctx.Next()
 }
+
+func AdminMiddleware(ctx *fiber.Ctx) error {
+	claims, err := utils.GetCurrentUser(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).SendString(err.Error())
+	}
+
+	if claims.IsAdmin != true {
+		return ctx.Status(fiber.StatusForbidden).SendString("Access denied")
+	}
+
+	return ctx.Next()
+}

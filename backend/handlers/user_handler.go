@@ -38,7 +38,7 @@ func (h *UserHandler) CreateUser(ctx *fiber.Ctx) error {
 	}
 
 	// Generate token and set cookie
-	if err := utils.GenerateToken(createdUser.ID.Hex(), createdUser.Email, ctx); err != nil {
+	if err := utils.GenerateToken(createdUser.ID.Hex(), createdUser.Email, createdUser.IsAdmin, ctx); err != nil {
 		return err
 	}
 

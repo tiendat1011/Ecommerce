@@ -12,10 +12,11 @@ import (
 type Claims struct {
 	UserID string `json:"user_id"`
 	Email string `json:"email"`
+	IsAdmin bool `json:"is_admin"`
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(userID string, email string, ctx *fiber.Ctx) error {
+func GenerateToken(userID string, email string, is_admin bool, ctx *fiber.Ctx) error {
 	jwtSecret := []byte(config.Cfg.JwtSecret)
 	// claims := jwt.MapClaims{
 	// 	"username": username,
@@ -25,6 +26,7 @@ func GenerateToken(userID string, email string, ctx *fiber.Ctx) error {
 	claims := Claims{
 		UserID: userID,
 		Email: email,
+		IsAdmin: is_admin,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt: jwt.NewNumericDate(time.Now()),
