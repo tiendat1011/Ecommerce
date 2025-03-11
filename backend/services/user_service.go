@@ -67,3 +67,20 @@ func (s *UserService) UpdateUserProfile(ur *models.UpdateRequest, ctx *fiber.Ctx
 
 	return nil
 }
+
+func (s *UserService) DeleteUserById(id string) error {
+	user, err := s.userDAO.GetUserById(id)
+	if err != nil {
+
+	}
+
+	if user.IsAdmin == true {
+		return fiber.NewError(400, "Cannot delete admin user")
+	}
+
+	if err := s.DeleteUserById(user.ID.Hex()); err != nil {
+		return err
+	}
+	
+	return nil
+}

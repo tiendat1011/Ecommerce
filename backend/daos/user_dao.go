@@ -113,8 +113,26 @@ func (d *UserDAO) UpdateUser(ur *models.UpdateRequest, id string) (error) {
 	}
 
 	if result.MatchedCount == 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "Something went when saving")
+		return fiber.NewError(fiber.StatusBadRequest, "Something went wrong when saving")
 	}
 
+	return nil
+}
+
+func (d *UserDAO) DeleteUser(id string) error {
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "invalid user ID format")
+	}
+
+	result, err := d.collection.DeleteOne(context.TODO(), bson.M{"_id": objID})
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to update user")
+	}
+
+	if result.DeletedCount == 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "Something went wrong when deleting")
+	}
 	return nil
 }

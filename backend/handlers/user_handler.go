@@ -77,3 +77,8 @@ func (h *UserHandler) UpdateUserProfile(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON("Updated successfully")
 }
+
+func (h *UserHandler) DeleteUserById(ctx *fiber.Ctx) error {
+	h.userService.DeleteUserById(ctx.Params("id"))
+	return ctx.Status(fiber.StatusOK).SendString("Deleted successfully")
+}

@@ -20,9 +20,12 @@ func UserRoutes(app fiber.Router) {
 
 	userGroup := app.Group("/users")
 	userGroup.Post("/", userHandler.CreateUser)
-	userGroup.Get("/", middlewares.AuthMiddleware, middlewares.AdminMiddleware, userHandler.GetAllUsers)
 	userGroup.Get("/profile", middlewares.AuthMiddleware, userHandler.GetUserProfile)
 	userGroup.Put("/profile", middlewares.AuthMiddleware, userHandler.UpdateUserProfile)
 
-	
+	// Admin route
+	userGroup.Get("/", middlewares.AuthMiddleware, middlewares.AdminMiddleware, userHandler.GetAllUsers)
+	//userGroup.Get("/:id", middlewares.AuthMiddleware, middlewares.AdminMiddleware, userHandler.GetUserById)
+	userGroup.Delete("/:id", middlewares.AuthMiddleware, middlewares.AdminMiddleware, userHandler.DeleteUserById)
+	//userGroup.Put("/:id", middlewares.AuthMiddleware, middlewares.AdminMiddleware, users.UpdateUserById)
 }
