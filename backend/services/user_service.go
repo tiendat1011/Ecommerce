@@ -49,7 +49,7 @@ func (s *UserService) GetUserProfile(ctx *fiber.Ctx) (*models.User, error) {
 
 	user, err := s.userDAO.GetUserById(userClaims.UserID)
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusNotFound, err.Error())
+		return nil, err
 	}
 
 	return user, nil
@@ -71,7 +71,7 @@ func (s *UserService) UpdateUserProfile(ur *models.UpdateRequest, ctx *fiber.Ctx
 func (s *UserService) DeleteUserById(id string) error {
 	user, err := s.userDAO.GetUserById(id)
 	if err != nil {
-
+		return err
 	}
 
 	if user.IsAdmin == true {
@@ -82,5 +82,31 @@ func (s *UserService) DeleteUserById(id string) error {
 		return err
 	}
 	
+	return nil
+}
+
+func (s *UserService) GetUserById(id string) (*models.User, error) {
+	user, err := s.userDAO.GetUserById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *UserService) UpdateUserById(ur *models.UpdateRequest, id string) error {
+	user, err := s.userDAO.GetUserById(id)
+	if err != nil {
+		return err
+	}
+
+	if user.IsAdmin == true {
+		return fiber.NewError(400, "Cannot adjust admin user")
+	}
+	
+	if err := s.userDAO.UpdateUser(ur, id); err != nil {
+		return err
+	}
+
 	return nil
 }

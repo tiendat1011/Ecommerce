@@ -25,7 +25,7 @@ func UserRoutes(app fiber.Router) {
 
 	// Admin route
 	userGroup.Get("/", middlewares.AuthMiddleware, middlewares.AdminMiddleware, userHandler.GetAllUsers)
-	//userGroup.Get("/:id", middlewares.AuthMiddleware, middlewares.AdminMiddleware, userHandler.GetUserById)
+	userGroup.Get("/:id", middlewares.AuthMiddleware, middlewares.AdminMiddleware, userHandler.GetUserById)
 	userGroup.Delete("/:id", middlewares.AuthMiddleware, middlewares.AdminMiddleware, userHandler.DeleteUserById)
 	//userGroup.Put("/:id", middlewares.AuthMiddleware, middlewares.AdminMiddleware, users.UpdateUserById)
 }

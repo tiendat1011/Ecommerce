@@ -5,7 +5,6 @@ import (
 	"ecommerce-project/databases"
 	"ecommerce-project/models"
 	"ecommerce-project/utils"
-	"errors"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -47,12 +46,12 @@ func (d *UserDAO) GetUserById(id string) (*models.User, error) {
 
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return nil, errors.New("invalid user ID format")
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "invalid user ID format")
 	}
 
 	err = d.collection.FindOne(context.TODO(), bson.M{"_id": objID}).Decode(&user)
 	if err != nil {
-		return nil, err
+		return nil, fiber.NewError(fiber.StatusBadRequest, "cannot find the user")
 	}
 
 	return &user, nil
@@ -86,7 +85,7 @@ func (d *UserDAO) GetAllUsers() ([]*models.User, error) {
 	return users, nil
 }
 
-func (d *UserDAO) UpdateUser(ur *models.UpdateRequest, id string) (error) {
+func (d *UserDAO) UpdateUser(ur *models.UpdateRequest, id string) error {
 	update := bson.M{}
 
 	if ur.Username != "" {
@@ -98,6 +97,8 @@ func (d *UserDAO) UpdateUser(ur *models.UpdateRequest, id string) (error) {
 	if ur.Password != "" {
 		update["password"], _ = utils.HashPassword(ur.Password) // Hash password
 	}
+
+	update["is_admin"] = ur.IsAdmin
 
 	if len(update) == 0 {
 		return fiber.NewError(fiber.StatusBadRequest, "No fields to update")
@@ -120,7 +121,6 @@ func (d *UserDAO) UpdateUser(ur *models.UpdateRequest, id string) (error) {
 }
 
 func (d *UserDAO) DeleteUser(id string) error {
-
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "invalid user ID format")

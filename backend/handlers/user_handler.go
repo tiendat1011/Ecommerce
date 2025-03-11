@@ -78,7 +78,33 @@ func (h *UserHandler) UpdateUserProfile(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON("Updated successfully")
 }
 
+func (h *UserHandler) GetUserById(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	user, err := h.userService.GetUserById(id)
+	if err != nil {
+		return err 
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(user)
+}
+
+func (h *UserHandler) UpdateUserById(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+
+	ur := &models.UpdateRequest{}
+	if err := ctx.BodyParser(ur); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+
+	if err := h.userService.UpdateUserById(ur, id); err != nil {
+		return err
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON("")
+}
+
 func (h *UserHandler) DeleteUserById(ctx *fiber.Ctx) error {
 	h.userService.DeleteUserById(ctx.Params("id"))
+
 	return ctx.Status(fiber.StatusOK).SendString("Deleted successfully")
 }
