@@ -66,3 +66,12 @@ func (h *CategoryHandler) DeleteCategory(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).SendString("Deleted successfully")
 }
+
+func (h *CategoryHandler) GetAllCategory(ctx *fiber.Ctx) error {
+	category, err := h.categoryService.GetAllCategory()
+	if err != nil {
+		return err
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(category)
+}

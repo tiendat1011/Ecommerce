@@ -83,6 +83,21 @@ func (d *CategoryDAO) DeleteCategory(id string) error {
 	if result.DeletedCount == 0 {
 		return fiber.NewError(fiber.StatusBadRequest, "Something went wrong when deleting")
 	}
-	
+
 	return nil
+}
+
+func (d *CategoryDAO) GetAllCategory() ([]*models.Category, error) {
+	cursor, err := d.collection.Find(context.TODO(), bson.M{})
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+	defer cursor.Close(context.TODO())
+
+	var category []*models.Category
+	if err = cursor.All(context.TODO(), &category); err != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return category, nil
 }

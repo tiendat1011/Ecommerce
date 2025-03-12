@@ -45,3 +45,12 @@ func (s *CategoryService) DeleteCategory(id string) error {
 
 	return nil
 }
+
+func (s *CategoryService) GetAllCategory() ([]*models.Category, error) {
+	category, err := s.categoryDAO.GetAllCategory()
+	if err != nil {
+		return nil, err
+	}
+
+	return category, nil
+}
