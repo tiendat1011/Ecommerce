@@ -39,6 +39,20 @@ func (h *CategoryHandler) CreateCategory(ctx *fiber.Ctx) error {
 }
 
 func (h *CategoryHandler) UpdateCategory(ctx *fiber.Ctx) error {
+	var ur models.UpdateCategoryRequest
+	id := ctx.Params("id")
 
-	return ctx.Status(fiber.StatusOK).JSON("")
+	if err := ctx.BodyParser(&ur); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+
+	if errs := h.validator.Validate(&ur); len(errs) > 0 && errs[0].Error {
+		return h.validator.DefaultMessage(errs)
+	}
+
+	if err := h.categoryService.UpdateCategory(&ur, id); err != nil {
+		return err
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(ur.Name)
 }

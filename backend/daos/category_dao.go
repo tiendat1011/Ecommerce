@@ -44,3 +44,24 @@ func (d *CategoryDAO) CreateCategory(nc *models.Category) (*models.Category, err
 
 	return nc, nil
 }
+
+func (d *CategoryDAO) UpdateCategory(ur *models.UpdateCategoryRequest, id string) error {
+	update := bson.M{}
+
+	update["name"] = ur.Name
+
+	updated := bson.M{"$set": update}
+
+	objID, err := primitive.ObjectIDFromHex(id)
+
+	result, err := d.collection.UpdateOne(context.TODO(), bson.M{"_id": objID}, updated)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to update user")
+	}
+
+	if result.MatchedCount == 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "Something went wrong when saving")
+	}
+
+	return nil
+}

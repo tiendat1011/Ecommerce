@@ -29,3 +29,11 @@ func (s *CategoryService) CreateCategory(category *models.Category) (*models.Cat
 
 	return createdCategory, nil
 }
+
+func (s *CategoryService) UpdateCategory(ur *models.UpdateCategoryRequest, id string) error {
+	if err := s.categoryDAO.UpdateCategory(ur, id); err != nil {
+		return err
+	}
+
+	return nil
+}
