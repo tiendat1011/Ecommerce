@@ -21,4 +21,5 @@ func CategoryRoutes(app fiber.Router) {
 	categoryGroup := app.Group("/category", middlewares.AuthMiddleware)
 	categoryGroup.Post("/", categoryHandler.CreateCategory)
 	categoryGroup.Put("/:id", categoryHandler.UpdateCategory)
+	categoryGroup.Delete("/:id", categoryHandler.DeleteCategory)
 }

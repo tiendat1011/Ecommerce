@@ -37,3 +37,11 @@ func (s *CategoryService) UpdateCategory(ur *models.UpdateCategoryRequest, id st
 
 	return nil
 }
+
+func (s *CategoryService) DeleteCategory(id string) error {
+	if err := s.categoryDAO.DeleteCategory(id); err != nil {
+		return err
+	}
+
+	return nil
+}

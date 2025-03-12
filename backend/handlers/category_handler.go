@@ -56,3 +56,13 @@ func (h *CategoryHandler) UpdateCategory(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(ur.Name)
 }
+
+func (h *CategoryHandler) DeleteCategory(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+
+	if err := h.categoryService.DeleteCategory(id); err != nil {
+		return err
+	}
+
+	return ctx.Status(fiber.StatusOK).SendString("Deleted successfully")
+}

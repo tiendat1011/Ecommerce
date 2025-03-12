@@ -53,15 +53,36 @@ func (d *CategoryDAO) UpdateCategory(ur *models.UpdateCategoryRequest, id string
 	updated := bson.M{"$set": update}
 
 	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "invalid category ID format")
+	}
 
 	result, err := d.collection.UpdateOne(context.TODO(), bson.M{"_id": objID}, updated)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Failed to update user")
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to update category")
 	}
 
 	if result.MatchedCount == 0 {
 		return fiber.NewError(fiber.StatusBadRequest, "Something went wrong when saving")
 	}
 
+	return nil
+}
+
+func (d *CategoryDAO) DeleteCategory(id string) error {
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "invalid category ID format")
+	}
+
+	result, err := d.collection.DeleteOne(context.TODO(), bson.M{"_id": objID})
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to delete category")
+	}
+
+	if result.DeletedCount == 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "Something went wrong when deleting")
+	}
+	
 	return nil
 }
