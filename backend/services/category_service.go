@@ -54,3 +54,12 @@ func (s *CategoryService) GetAllCategory() ([]*models.Category, error) {
 
 	return category, nil
 }
+
+func (s *CategoryService) GetCategory(id string) (*models.Category, error) {
+	category, err := s.categoryDAO.GetCategory(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return category, nil
+}

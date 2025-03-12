@@ -23,4 +23,5 @@ func CategoryRoutes(app fiber.Router) {
 	categoryGroup.Put("/:id", categoryHandler.UpdateCategory)
 	categoryGroup.Delete("/:id", categoryHandler.DeleteCategory)
 	categoryGroup.Get("/", categoryHandler.GetAllCategory)
+	categoryGroup.Get("/:id", categoryHandler.GetCategory)
 }

@@ -75,3 +75,14 @@ func (h *CategoryHandler) GetAllCategory(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(category)
 }
+
+func (h *CategoryHandler) GetCategory(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+
+	category, err := h.categoryService.GetCategory(id)
+	if err != nil {
+		return err
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(category)
+}

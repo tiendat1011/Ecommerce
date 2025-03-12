@@ -101,3 +101,19 @@ func (d *CategoryDAO) GetAllCategory() ([]*models.Category, error) {
 
 	return category, nil
 }
+
+func (d *CategoryDAO) GetCategory(id string) (*models.Category, error) {
+	var category models.Category
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "invalid category ID format")
+	}
+
+	err = d.collection.FindOne(context.TODO(), bson.M{"_id": objID}).Decode(&category)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusBadRequest, "cannot find the category")
+	}
+
+	return &category, nil
+}
