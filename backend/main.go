@@ -36,6 +36,7 @@ func main() {
 	api := app.Group("/api/v1")
 	routes.UserRoutes(api)
 	routes.AuthRoute(api)
+	routes.CategoryRoutes(api)
 
 	// Start server
 	serverAddr := fmt.Sprintf("%s:%s", "", config.Cfg.ServerPort)
