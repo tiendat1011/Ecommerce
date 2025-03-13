@@ -9,11 +9,11 @@ import (
 )
 
 type CategoryHandler struct {
-	categoryService *services.CategoryService
+	categoryService services.CategoryService
 	validator       *utils.Validator
 }
 
-func NewCategoryHandler(categoryService *services.CategoryService, validator *utils.Validator) *CategoryHandler {
+func NewCategoryHandler(categoryService services.CategoryService, validator *utils.Validator) *CategoryHandler {
 	return &CategoryHandler{
 		categoryService: categoryService,
 		validator:       validator,

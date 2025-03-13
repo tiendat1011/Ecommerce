@@ -7,17 +7,25 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type CategoryService struct {
-	categoryDAO *daos.CategoryDAO
+type CategoryService interface {
+	CreateCategory(category *models.Category) (*models.Category, error)
+	UpdateCategory(ur *models.UpdateCategoryRequest, id string) error
+	DeleteCategory(id string) error
+	GetAllCategory() ([]*models.Category, error)
+	GetCategory(id string) (*models.Category, error)
 }
 
-func NewCategoryService(categoryDAO *daos.CategoryDAO) *CategoryService {
-	return &CategoryService{
+type categoryService struct {
+	categoryDAO daos.CategoryDAO
+}
+
+func NewCategoryService(categoryDAO daos.CategoryDAO) *categoryService {
+	return &categoryService{
 		categoryDAO: categoryDAO,
 	}
 }
 
-func (s *CategoryService) CreateCategory(category *models.Category) (*models.Category, error) {
+func (s *categoryService) CreateCategory(category *models.Category) (*models.Category, error) {
 	if existingCategory, _ := s.categoryDAO.GetCategoryByName(category.Name); existingCategory != nil {
 		return nil, fiber.NewError(fiber.StatusConflict, "Category already exists")
 	}
@@ -30,7 +38,7 @@ func (s *CategoryService) CreateCategory(category *models.Category) (*models.Cat
 	return createdCategory, nil
 }
 
-func (s *CategoryService) UpdateCategory(ur *models.UpdateCategoryRequest, id string) error {
+func (s *categoryService) UpdateCategory(ur *models.UpdateCategoryRequest, id string) error {
 	if err := s.categoryDAO.UpdateCategory(ur, id); err != nil {
 		return err
 	}
@@ -38,7 +46,7 @@ func (s *CategoryService) UpdateCategory(ur *models.UpdateCategoryRequest, id st
 	return nil
 }
 
-func (s *CategoryService) DeleteCategory(id string) error {
+func (s *categoryService) DeleteCategory(id string) error {
 	if err := s.categoryDAO.DeleteCategory(id); err != nil {
 		return err
 	}
@@ -46,7 +54,7 @@ func (s *CategoryService) DeleteCategory(id string) error {
 	return nil
 }
 
-func (s *CategoryService) GetAllCategory() ([]*models.Category, error) {
+func (s *categoryService) GetAllCategory() ([]*models.Category, error) {
 	category, err := s.categoryDAO.GetAllCategory()
 	if err != nil {
 		return nil, err
@@ -55,7 +63,7 @@ func (s *CategoryService) GetAllCategory() ([]*models.Category, error) {
 	return category, nil
 }
 
-func (s *CategoryService) GetCategory(id string) (*models.Category, error) {
+func (s *categoryService) GetCategory(id string) (*models.Category, error) {
 	category, err := s.categoryDAO.GetCategory(id)
 	if err != nil {
 		return nil, err
