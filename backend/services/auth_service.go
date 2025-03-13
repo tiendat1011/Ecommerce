@@ -8,17 +8,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type AuthService struct {
-	userDAO *daos.UserDAO
+type AuthService interface {
+	Login(lr *models.LoginRequest, ctx *fiber.Ctx) error
+	Logout(ctx *fiber.Ctx) error
 }
 
-func NewAuthService(userDAO *daos.UserDAO) *AuthService{
-	return &AuthService{
+type authService struct {
+	userDAO daos.UserDAO
+}
+
+func NewAuthService(userDAO daos.UserDAO) *authService{
+	return &authService{
 		userDAO: userDAO,
 	}
 }
 
-func (s *AuthService) Login(lr *models.LoginRequest, ctx *fiber.Ctx) error {
+func (s *authService) Login(lr *models.LoginRequest, ctx *fiber.Ctx) error {
 	existingUser, err := s.userDAO.GetUserByEmail(lr.Email)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "User not exists")
@@ -35,7 +40,7 @@ func (s *AuthService) Login(lr *models.LoginRequest, ctx *fiber.Ctx) error {
 	return nil
 }
 
-func (s *AuthService) Logout(ctx *fiber.Ctx) error {
+func (s *authService) Logout(ctx *fiber.Ctx) error {
 	ctx.ClearCookie("token")
 
 	return nil

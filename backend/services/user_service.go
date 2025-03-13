@@ -8,17 +8,26 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserService struct {
-	userDAO *daos.UserDAO
+type UserService interface {
+	GetUserById(id string) (*models.User, error)
+	CreateUser(user *models.User) (*models.User, error)
+	GetAllUsers() ([]*models.User, error)
+	GetUserProfile(ctx *fiber.Ctx) (*models.User, error)
+	UpdateUserProfile(ur *models.UpdateRequest, ctx *fiber.Ctx) error
+	DeleteUserById(id string) error
+	UpdateUserById(ur *models.UpdateRequest, id string) error
+}
+type userService struct {
+	userDAO daos.UserDAO
 }
 
-func NewUserService(uDAO *daos.UserDAO) *UserService {
-	return &UserService{
+func NewUserService(uDAO daos.UserDAO) *userService {
+	return &userService{
 		userDAO: uDAO,
 	}
 }
 
-func (s *UserService) CreateUser(user *models.User) (*models.User, error) {
+func (s *userService) CreateUser(user *models.User) (*models.User, error) {
 	if exists, _ := s.userDAO.GetUserByEmail(user.Email); exists != nil {
 		return nil, fiber.NewError(fiber.StatusConflict, "User already exists")
 	}
@@ -37,11 +46,11 @@ func (s *UserService) CreateUser(user *models.User) (*models.User, error) {
 	return createdUser, nil
 }
 
-func (s *UserService) GetAllUsers() ([]*models.User, error) {
+func (s *userService) GetAllUsers() ([]*models.User, error) {
 	return s.userDAO.GetAllUsers()
 }
 
-func (s *UserService) GetUserProfile(ctx *fiber.Ctx) (*models.User, error) {
+func (s *userService) GetUserProfile(ctx *fiber.Ctx) (*models.User, error) {
 	userClaims, err := utils.GetCurrentUser(ctx)
 	if err != nil {
 		return nil, fiber.NewError(fiber.StatusUnauthorized, err.Error())
@@ -55,7 +64,7 @@ func (s *UserService) GetUserProfile(ctx *fiber.Ctx) (*models.User, error) {
 	return user, nil
 }
 
-func (s *UserService) UpdateUserProfile(ur *models.UpdateRequest, ctx *fiber.Ctx) error {
+func (s *userService) UpdateUserProfile(ur *models.UpdateRequest, ctx *fiber.Ctx) error {
 	userClaims, err := utils.GetCurrentUser(ctx)
 	if err != nil {
 		return fiber.NewError(fiber.StatusUnauthorized, err.Error())
@@ -68,7 +77,7 @@ func (s *UserService) UpdateUserProfile(ur *models.UpdateRequest, ctx *fiber.Ctx
 	return nil
 }
 
-func (s *UserService) DeleteUserById(id string) error {
+func (s *userService) DeleteUserById(id string) error {
 	user, err := s.userDAO.GetUserById(id)
 	if err != nil {
 		return err
@@ -85,7 +94,7 @@ func (s *UserService) DeleteUserById(id string) error {
 	return nil
 }
 
-func (s *UserService) GetUserById(id string) (*models.User, error) {
+func (s *userService) GetUserById(id string) (*models.User, error) {
 	user, err := s.userDAO.GetUserById(id)
 	if err != nil {
 		return nil, err
@@ -94,7 +103,7 @@ func (s *UserService) GetUserById(id string) (*models.User, error) {
 	return user, nil
 }
 
-func (s *UserService) UpdateUserById(ur *models.UpdateRequest, id string) error {
+func (s *userService) UpdateUserById(ur *models.UpdateRequest, id string) error {
 	user, err := s.userDAO.GetUserById(id)
 	if err != nil {
 		return err

@@ -13,7 +13,16 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-type UserDAO struct {
+type UserDAO interface {
+	GetUserByEmail(email string) (*models.User, error)
+	GetUserById(id string) (*models.User, error)
+	CreateUser(user *models.User) (*models.User, error)
+	GetAllUsers() ([]*models.User, error)
+	UpdateUser(ur *models.UpdateRequest, id string) error
+	DeleteUser(id string) error
+}
+
+type userDAO struct {
 	collection *mongo.Collection
 }
 
@@ -21,16 +30,16 @@ const (
 	USER_COLLECTION = "users"
 )
 
-func NewUserDAO() *UserDAO {
+func NewUserDAO() *userDAO {
 	if databases.DB == nil {
 		panic("Not connect db yet")
 	}
-	return &UserDAO{
+	return &userDAO{
 		collection: databases.DB.Collection(USER_COLLECTION),
 	}
 }
 
-func (d *UserDAO) GetUserByEmail(email string) (*models.User, error) {
+func (d *userDAO) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	err := d.collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&user)
 
@@ -41,7 +50,7 @@ func (d *UserDAO) GetUserByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-func (d *UserDAO) GetUserById(id string) (*models.User, error) {
+func (d *userDAO) GetUserById(id string) (*models.User, error) {
 	var user models.User
 
 	objID, err := primitive.ObjectIDFromHex(id)
@@ -57,7 +66,7 @@ func (d *UserDAO) GetUserById(id string) (*models.User, error) {
 	return &user, nil
 }
 
-func (d *UserDAO) CreateUser(user *models.User) (*models.User, error) {
+func (d *userDAO) CreateUser(user *models.User) (*models.User, error) {
 	user.ID = primitive.NewObjectID()
 	user.IsAdmin = false
 	user.CreatedAt = time.Now()
@@ -70,7 +79,7 @@ func (d *UserDAO) CreateUser(user *models.User) (*models.User, error) {
 	return user, nil
 }
 
-func (d *UserDAO) GetAllUsers() ([]*models.User, error) {
+func (d *userDAO) GetAllUsers() ([]*models.User, error) {
 	cursor, err := d.collection.Find(context.TODO(), bson.M{})
 	if err != nil {
 		return nil, err
@@ -85,7 +94,7 @@ func (d *UserDAO) GetAllUsers() ([]*models.User, error) {
 	return users, nil
 }
 
-func (d *UserDAO) UpdateUser(ur *models.UpdateRequest, id string) error {
+func (d *userDAO) UpdateUser(ur *models.UpdateRequest, id string) error {
 	update := bson.M{}
 
 	if ur.Username != "" {
@@ -120,7 +129,7 @@ func (d *UserDAO) UpdateUser(ur *models.UpdateRequest, id string) error {
 	return nil
 }
 
-func (d *UserDAO) DeleteUser(id string) error {
+func (d *userDAO) DeleteUser(id string) error {
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "invalid user ID format")

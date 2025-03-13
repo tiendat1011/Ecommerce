@@ -9,11 +9,11 @@ import (
 )
 
 type AuthHandler struct {
-	authService *services.AuthService
+	authService services.AuthService
 	validator *utils.Validator
 }
 
-func NewAuthHandler(authService *services.AuthService, validator *utils.Validator) *AuthHandler {
+func NewAuthHandler(authService services.AuthService, validator *utils.Validator) *AuthHandler {
 	return &AuthHandler{
 		authService: authService,
 		validator: validator,

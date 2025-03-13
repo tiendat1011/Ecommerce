@@ -9,11 +9,11 @@ import (
 )
 
 type UserHandler struct {
-	userService *services.UserService
+	userService services.UserService
 	validator   *utils.Validator
 }
 
-func NewUserHandler(userService *services.UserService, validator *utils.Validator) *UserHandler {
+func NewUserHandler(userService services.UserService, validator *utils.Validator) *UserHandler {
 	return &UserHandler{
 		userService: userService,
 		validator:   validator,
