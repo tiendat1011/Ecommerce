@@ -42,7 +42,19 @@ services:
       - ME_CONFIG_BASICAUTH_USERNAME=${BASICAUTH_USERNAME}
       - ME_CONFIG_BASICAUTH_PASSWORD=${BASICAUTH_PASSWORD}
     depends_on:
-      - mongodb  
+      - mongodb
+
+  valkey:
+    container_name: valkey
+    image: valkey
+    restart: always
+    ports:
+      - 6379:6379
+    environment:
+      - VALKEY_EXTRA_FLAGS=${VALKEY_EXTRA_FLAGS}
+    volumes:
+      - valkey_data:/data
     
 volumes:
   mongo_data:
+  valkey_data:
