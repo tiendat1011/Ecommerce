@@ -12,7 +12,7 @@ import (
 
 var DB *mongo.Database
 
-func Init(uri string) {
+func InitMongoDB(uri string) {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
 

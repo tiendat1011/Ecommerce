@@ -13,6 +13,8 @@ services:
       - DB_PASS=${DB_PASS}
       - SERVER_PORT=${SERVER_PORT}
       - JWT_SECRET=${JWT_SECRET}
+      - VALKEY_HOST=${VALKEY_HOST}
+      - VALKEY_PORT=${VALKEY_PORT}
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     restart: always

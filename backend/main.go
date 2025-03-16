@@ -26,7 +26,10 @@ func main() {
 		config.Cfg.DbHost,
 		config.Cfg.DbPort,
 	)
-	databases.Init(connectionUri)
+
+	databases.InitMongoDB(connectionUri)
+	databases.InitValkey()
+	
 	app := fiber.New()
 
 	// Middleware
