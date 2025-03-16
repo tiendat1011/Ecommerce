@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	
 
 	"ecommerce-project/config"
 	"ecommerce-project/databases"
@@ -29,11 +29,11 @@ func main() {
 
 	databases.InitMongoDB(connectionUri)
 	databases.InitValkey()
-	
+
 	app := fiber.New()
 
 	// Middleware
-	app.Use(logger.New())
+	// app.Use()
 
 	// Init Route
 	api := app.Group("/api/v1")

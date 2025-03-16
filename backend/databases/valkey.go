@@ -9,19 +9,19 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var RedisClient *redis.Client
+var Rdb *redis.Client
 
 func InitValkey() {
 	host := fmt.Sprintf("%s:%s", config.Cfg.ValkeyHost, config.Cfg.ValkeyPort)
 	log.Println(host)
 
-	RedisClient = redis.NewClient(&redis.Options{
+	Rdb = redis.NewClient(&redis.Options{
 		Addr:     host,
 		Password: "",
 		DB:       0,
 	})
 
-	if _, err := RedisClient.Ping(context.TODO()).Result(); err != nil {
+	if _, err := Rdb.Ping(context.TODO()).Result(); err != nil {
 		log.Fatalf("Valkey connection failed: %v", err)
 	}
 }
