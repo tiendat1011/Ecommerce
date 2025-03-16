@@ -1,6 +1,12 @@
 package middlewares
 
 import (
+	"bytes"
+	"ecommerce-project/config"
+	"encoding/json"
+	"io"
+	"log"
+	"net/http"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -8,21 +14,37 @@ import (
 )
 
 func SetupLogger() fiber.Handler {
+	file, err := os.OpenFile("../log/logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal("Error opening log file: %v",err)
+		return nil
+	}
+
+	defer file.Close()
+
+	multiWriter := io.MultiWriter(os.Stdout, file)
 
 	return logger.New(logger.Config{
 		TimeZone:   "Asia/Ho_Chi_Minh",
 		TimeFormat: "2002-11-10 19:19:00",
-		Output:     os.Stdout,
+		Output:     multiWriter,
 		Done: func(c *fiber.Ctx, logString []byte) {
-
+			SendLogToDiscord(string(logString))
 		},
 	})
+}
 
-	// return func(ctx *fiber.Ctx) error {
-	// 	start := time.Now()
-	// 	err := ctx.Next()
-	// 	duration := time.Since(start)
-	// 	log.Printf("[%s] %s %s %s", ctx.Method(), ctx.Path(), duration, ctx.IP())
-	// 	return err
-	// }
+type DiscordPayload struct {
+	Content string `json:"content"`
+}
+
+func SendLogToDiscord(message string) {
+	payload := DiscordPayload{Content: "**API Log** ```" + message + "```"}
+
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		log.Fatal("Unable to marshal: %v", err.Error())
+	}
+
+	http.Post(config.Cfg.DiscordWebhookURL, "application/json", bytes.NewBuffer(jsonPayload))
 }

@@ -5,10 +5,10 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	
 
 	"ecommerce-project/config"
 	"ecommerce-project/databases"
+	"ecommerce-project/middlewares"
 	"ecommerce-project/routes"
 )
 
@@ -33,7 +33,7 @@ func main() {
 	app := fiber.New()
 
 	// Middleware
-	// app.Use()
+	app.Use(middlewares.SetupLogger())
 
 	// Init Route
 	api := app.Group("/api/v1")
