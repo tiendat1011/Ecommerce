@@ -17,6 +17,8 @@ type Config struct {
 	// Redis
 	ValkeyHost string `env:"VALKEY_HOST" envDefault:"localhost"`
 	ValkeyPort string `env:"VALKEY_PORT" envDefault:"6379"`
+	// Discord
+	DiscordWebhookURL string `env:"DISCORD_WEBHOOK_URL" envDefault:""`
 }
 
 var Cfg *Config

@@ -14,13 +14,11 @@ import (
 )
 
 func SetupLogger() fiber.Handler {
-	file, err := os.OpenFile("../log/logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile("./logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal("Error opening log file: %v",err)
 		return nil
 	}
-
-	defer file.Close()
 
 	multiWriter := io.MultiWriter(os.Stdout, file)
 
