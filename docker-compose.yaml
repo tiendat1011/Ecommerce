@@ -15,6 +15,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - VALKEY_HOST=${VALKEY_HOST}
       - VALKEY_PORT=${VALKEY_PORT}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     restart: always
